@@ -6,8 +6,111 @@ package leetcode
 object Solution1 {
   def main(args:Array[String]):Unit = {
     var x = findMedianSortedArrays(Array[Int](6),Array[Int](3,4,8))
-    println(x)
+    println(reverse(-123456))
   }
+
+  /**
+    *
+    */
+  def myAtoi(str: String): Int = {
+    return 0;
+  }
+
+  /** Reverse Integer
+    * Given a 32-bit signed integer, reverse digits of an integer.
+    *
+    * Assume we are dealing with an environment which could only store integers within the 32-bit signed integer range:
+    * [−231,  231 − 1]. For the purpose of this problem, assume that your function returns 0 when the reversed integer overflows.
+    */
+  def reverse(x: Int): Int = {
+    if(x > -10 && x < 10)
+        return x;
+    var str = x.toString
+    var fuhao:Char = 0;
+    while((str.length-1) == str.lastIndexOf("0")){
+      str = str.substring(0,str.length-1)
+    }
+    if(str.startsWith("-") || str.startsWith("+")){
+      fuhao = str.charAt(0)
+      str = str.substring(1,str.length)
+    }
+    str = str.reverse
+    if(fuhao != 0)
+      str = fuhao.toString + str
+
+    str.reverse
+    val L:Long = str.toLong
+    if(L < Integer.MIN_VALUE || L > Integer.MAX_VALUE)
+      return 0;
+
+    return str.toInt;
+  }
+
+  /** ZigZag Conversion
+    * The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this:
+    * (you may want to display this pattern in a fixed font for better legibility)
+P   A   H   N
+A P L S I I G
+Y   I   R
+    * And then read line by line: "PAHNAPLSIIGYIR"
+    *
+    * eg2. s = "PAYPALISHIRING", numRows = 4
+P     I    N
+A   L S  I G
+Y A   H R
+P     I
+    *
+    * Output: "PINALSIGYAHRPI"
+    */
+  //将其转换成横的形式，方便存储，即将其反转过来，以eg.2为例，第一行变成PAYP
+  def convert(s: String, numRows: Int): String = {
+    if(s == null || s.length == 0)
+      return "";
+    if(numRows == 0 || numRows == 1)
+      return s;
+    var list = scala.collection.mutable.ListBuffer[Array[Char]]();
+    var i = 0;
+    val sLen = s.length();
+    var remainder = 0;
+    while(i < sLen){
+      var tem = new Array[Char](numRows);
+      remainder = list.size % (numRows - 1);
+      //需要填充一整行的情况，即锯齿的边
+      if(remainder == 0){
+        var j = 0;
+        while(i < sLen && j < numRows){
+          tem(j) = s.charAt(i);
+          i += 1;
+          j += 1;
+        }
+
+        i -= 1;
+      }else{
+        //只需填充一个的情况
+        tem(numRows - 1 - remainder) = s.charAt(i);
+      }
+      list += tem;
+      i += 1;
+    }
+    val sBuff = new StringBuffer();
+    val listSize = list.size;
+    i = 0;
+    var j = 0;
+    while(i < numRows){
+      j = 0
+      while(j < listSize){
+        if(list(j)(i) > 0){
+          sBuff.append(list(j)(i))
+        }
+        j += 1;
+      }
+      i += 1;
+    }
+
+
+    return sBuff.toString;
+  }
+
 
   /** Median of Two Sorted Arrays
    *There are two sorted arrays nums1 and nums2 of size m and n respectively.
