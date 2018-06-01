@@ -6,13 +6,86 @@ package leetcode
 object Solution1 {
   def main(args:Array[String]):Unit = {
     var x = findMedianSortedArrays(Array[Int](6),Array[Int](3,4,8))
-    println(reverse(-123456))
+    println(myAtoi("    0000000000000   "))
+    val s = "20000000000000000000"
+
   }
 
-  /**
+  /** String to Integer (atoi)
     *
+    * Implement atoi which converts a string to an integer.
+
+The function first discards as many whitespace characters as necessary until the first non-whitespace character is found. Then, starting from this character, takes an optional initial plus or minus sign followed by as many numerical digits as possible, and interprets them as a numerical value.
+
+The string can contain additional characters after those that form the integral number, which are ignored and have no effect on the behavior of this function.
+
+If the first sequence of non-whitespace characters in str is not a valid integral number, or if no such sequence exists because either str is empty or it contains only whitespace characters, no conversion is performed.
+
+If no valid conversion could be performed, a zero value is returned.
+
+Note:
+
+Only the space character ' ' is considered as whitespace character.
+Assume we are dealing with an environment which could only store integers within the 32-bit signed integer range: [−231,  231 − 1]. If the numerical value is out of the range of representable values, INT_MAX (231 − 1) or INT_MIN (−231) is returned.
+    * 这题做得我崩溃，不停地错误碰撞。。。搞得代码根shit一样
     */
   def myAtoi(str: String): Int = {
+    var s = str.trim
+    if(s.length == 0)
+      return 0;
+    var fuhao:Char = 0;
+    var zhenghao:Char = 0;
+    if(s.charAt(0) == '-') {
+      fuhao = '-';
+      s = s.substring(1)
+    }else if(s.charAt(0) == '+'){
+      zhenghao = '+';
+      s = s.substring(1)
+    }
+    while(s.length != 0 && s.charAt(0) == '0') {
+      s = s.substring(1)
+      if (s.length != 0 && (s.charAt(0) == '-' || s.charAt(0) == '+'))
+        return 0;
+    }
+    if(fuhao != 0){
+      s = "-" + s;
+    }else if(zhenghao != 0){
+      s = "+" + s;
+    }
+    if(s.length == 0)
+      return 0;
+    val firC = s.charAt(0)
+    try {
+      firC match {
+        case '+' => return if(s.substring(1).length == 0 || s.charAt(1) < 48 || s.charAt(1) > 57) 0 else if (s.length > 18 || s.toLong > Integer.MAX_VALUE) Integer.MAX_VALUE else s.toInt;
+        case '-' => return if(s.substring(1).length == 0 || s.charAt(1) < 48 || s.charAt(1) > 57) 0 else if (s.length > 18 || s.toLong < Integer.MIN_VALUE) Integer.MIN_VALUE else s.toInt;
+        case '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '+' =>
+          return if ( s.length > 18 ||  s.toLong > Integer.MAX_VALUE) Integer.MAX_VALUE else s.toInt;
+        case _ => return 0
+      }
+    }catch{
+      case _ =>{
+        import util.control.Breaks._
+        var index = 0;
+        breakable(
+          for(i:Char <- s.substring(1)){
+            if(i < 48 || i > 57) {
+              index = s.substring(1).indexOf(i)
+              break();
+            }
+          }
+        )
+        s = s.substring(0,index+1);
+        val firC = s.charAt(0)
+        firC match {
+          case '+' => return if(s.substring(1).length == 0 || s.charAt(1) < 48 || s.charAt(1) > 57) 0 else if (s.length > 18 || s.toLong > Integer.MAX_VALUE) Integer.MAX_VALUE else s.toInt;
+          case '-' => return if(s.substring(1).length == 0 || s.charAt(1) < 48 || s.charAt(1) > 57) 0 else if (s.length > 18 || s.toLong < Integer.MIN_VALUE) Integer.MIN_VALUE else s.toInt;
+          case '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '+' =>
+            return if ( s.length > 18 ||  s.toLong > Integer.MAX_VALUE) Integer.MAX_VALUE else s.toInt;
+          case _ => return 0
+        }
+      }
+    }
     return 0;
   }
 
