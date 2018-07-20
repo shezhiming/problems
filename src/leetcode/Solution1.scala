@@ -5,11 +5,302 @@ package leetcode
  */
 object Solution1 {
   def main(args:Array[String]):Unit = {
-    var x = findMedianSortedArrays(Array[Int](6),Array[Int](3,4,8))
-    println(myAtoi("    0000000000000   "))
-    val s = "20000000000000000000"
+    val a = Array[Int](1,1)
+
+//    var x = findMedianSortedArrays(Array[Int](6),Array[Int](3,4,8))
+    println(romanToInt("DCXXI"))
 
   }
+
+  /** Roman to Integer
+    *
+  For example, two is written as II in Roman numeral, just two one's added together. Twelve is written as, XII, which is simply X + II. The number twenty seven is written as XXVII, which is XX + V + II.
+
+Roman numerals are usually written largest to smallest from left to right. However, the numeral for four is not IIII. Instead, the number four is written as IV. Because the one is before the five we subtract it making four. The same principle applies to the number nine, which is written as IX. There are six instances where subtraction is used:
+
+I can be placed before V (5) and X (10) to make 4 and 9.
+X can be placed before L (50) and C (100) to make 40 and 90.
+C can be placed before D (500) and M (1000) to make 400 and 900.
+Given a roman numeral, convert it to an integer. Input is guaranteed to be within the range from 1 to 3999.
+    *
+    */
+  def romanToInt(s: String): Int = {
+    if(s == "")
+      return 0;
+
+    val hM = scala.collection.mutable.HashMap[String,String]()
+    hM.put("IV","4");hM.put("IX","9");
+    hM.put("XL","40");hM.put("XC","90");
+    hM.put("CD","400");hM.put("CM","900");
+    val commonM = scala.collection.mutable.HashMap[String,String]()
+    commonM.put("I","1");commonM.put("V","5");
+    commonM.put("X","10");commonM.put("L","50");
+    commonM.put("C","100");commonM.put("D","500");
+    commonM.put("M","1000");
+    //只有一个字母的情况
+    if(s.length == 1){
+      return commonM.get(s).get.toInt;
+    }
+    var result = 0;
+    var i = 0;
+    val len = s.length;
+    while( i < len-1 ){
+      if(hM.get(s.substring(i,i+2)) != None){
+        result += hM.get(s.substring(i,i+2)).get.toInt;
+        i += 1;
+      }else{
+        result += commonM.get(s.substring(i,i+1)).get.toInt;
+      }
+      i += 1;
+    }
+    println(s.substring(len-2,len-1))
+    //处理最后一个跳过了的情况
+    //while里面第一个if的情况
+    if(i != len){
+      result += commonM.get(s.substring(len-1,len)).get.toInt;
+    }
+    return result;
+  }
+
+
+  /** Integer to Roman
+    * Roman numerals are represented by seven different symbols: I, V, X, L, C, D and M.
+    *
+Symbol       Value
+I             1
+V             5
+X             10
+L             50
+C             100
+D             500
+M             1000
+  For example, two is written as II in Roman numeral, just two one's added together. Twelve is written as, XII, which is simply X + II. The number twenty seven is written as XXVII, which is XX + V + II.
+
+Roman numerals are usually written largest to smallest from left to right. However, the numeral for four is not IIII. Instead, the number four is written as IV. Because the one is before the five we subtract it making four. The same principle applies to the number nine, which is written as IX. There are six instances where subtraction is used:
+
+I can be placed before V (5) and X (10) to make 4 and 9.
+X can be placed before L (50) and C (100) to make 40 and 90.
+C can be placed before D (500) and M (1000) to make 400 and 900.
+Given an integer, convert it to a roman numeral. Input is guaranteed to be within the range from 1 to 3999.
+    */
+
+  def intToRoman(num: Int): String = {
+    if(num == 0)
+      return "";
+    val hM = scala.collection.mutable.HashMap[String,String]()
+    hM.put("4","IV");hM.put("9","IX");
+    hM.put("40","XL");hM.put("90","XC");
+    hM.put("400","CD");hM.put("900","CM");
+    val commonM = scala.collection.mutable.HashMap[String,String]()
+    commonM.put("1","I");commonM.put("5","V");
+    commonM.put("10","X");commonM.put("50","L");
+    commonM.put("100","C");commonM.put("500","D");
+    commonM.put("1000","M");
+    var ten = 1000;
+    val sBuff = new StringBuffer()
+    while( num / ten == 0 ){
+      ten /= 10;
+    }
+    var n = num;
+    while( ten != 0 ){
+      var tem = n / ten;
+      n = n - tem * ten;
+      if(hM.get((tem * ten).toString) != None){
+        sBuff.append(hM.get((tem * ten).toString).get)
+      }else{
+
+        if(tem >= 5){
+          sBuff.append(commonM.get((5 * ten).toString).get)
+          tem -= 5;
+        }
+        if(tem != 0)
+          for(i <- 1 to tem){
+            sBuff.append(commonM.get((1 * ten).toString).get)
+          }
+      }
+      ten /= 10;
+    }
+
+    return sBuff.toString;
+  }
+
+
+  /** Container With Most Water
+    *
+  Given n non-negative integers a1, a2, ..., an, where each represents a point at coordinate (i, ai).
+  n vertical lines are drawn such that the two endpoints of line i is at (i, ai) and (i, 0). Find
+  two lines, which together with x-axis forms a container, such that the container contains the
+  most water.
+
+  给一个数组，其中数组在下标i处的值为A[i]，坐标(i,A[i])和坐标(i,0)构成一条垂直于坐标轴x的直线。现任取两条垂线和x轴组成四边形容器。
+  问其中盛水量最大为多少？
+Note: You may not slant the container and n is at least 2.
+    *
+    */
+  def maxArea(height: Array[Int]): Int = {
+    if(height.length == 0 || height.length == 1)
+      return 0;
+
+    var i:Int = 0;
+    val length = height.length;
+    var max:Int = 0;
+
+    while(i < length){
+      var j = length-1;
+      var lowMax = 0;
+      var highMax = 0;
+      while(j > i){
+        if( highMax == 0 && height(j) > height(i) ){
+          highMax = (j - i) * height(i);
+        }
+        if( height(j) <= height(i) ){
+          val tem = (j - i) * height(j)
+          if(tem > lowMax)
+            lowMax = tem;
+        }
+        j -= 1;
+      }
+      if( lowMax > max )
+        max = lowMax;
+      if(highMax > max)
+        max = highMax;
+      i += 1;
+    }
+
+    return max;
+  }
+
+
+  /** Regular Expression Matching
+    * Given an input string (s) and a pattern (p), implement regular expression matching with support for '.' and '*'.
+'.' Matches any single character.
+'*' Matches zero or more of the preceding element.
+    *
+    * The matching should cover the entire input string (not partial).
+    * 这里使用了递归的思路，并且额外做了一些特殊类的处理，缺点是效率太低
+    */
+
+  /** 更简洁的一段java代码，但是看不懂
+  public boolean isMatch(String text, String pattern) {
+    if (pattern.isEmpty()) return text.isEmpty();
+    boolean first_match = (!text.isEmpty() &&
+      (pattern.charAt(0) == text.charAt(0) || pattern.charAt(0) == '.'));
+
+    if (pattern.length() >= 2 && pattern.charAt(1) == '*'){
+      return (isMatch(text, pattern.substring(2)) ||
+        (first_match && isMatch(text.substring(1), pattern)));
+    } else {
+      return first_match && isMatch(text.substring(1), pattern.substring(1));
+    }
+  }
+    */
+
+  def isMatch(s: String, p: String): Boolean = {
+    if(p == ".*")
+      return true;
+    if(s.length != 0 && p.length == 0)
+      return false;
+//    println(s + "   " + p)
+    var i = 0;
+    var j = 0;
+    val sLen = s.size;
+    val pLen = p.size;
+    if(s.length == 0){
+      j = 0;
+      while(j > 0){
+        if((j+1) < pLen && p.charAt(j+1) == '*'){
+          j += 2;
+        }
+      }
+      if(j == pLen)
+        return true;
+    }
+
+    import util.control.Breaks._
+
+      while(i < sLen && j < pLen){
+        breakable(
+          //当前匹配字符为'.'，判断接下来是字符还是*，组成'.*'
+          if(p.charAt(j) == '.'){
+            if((j+1) < pLen && p.charAt(j+1) == '*'){
+              if(j+2 < pLen){
+                 while(i <= s.length){
+                     val b = isMatch(s.substring(i),p.substring(j+2))
+                     if(b)
+                       return true;
+                   i += 1;
+                 }
+
+              }else{
+                return true;
+              }
+            }else{
+              break;
+            }
+          //当前匹配字符为'*的情况'
+          }else if(p.charAt(j) == '*'){
+            val c = p.charAt(j - 1);
+            while(i < sLen && s.charAt(i) == c) {
+              var b = isMatch(s.substring(i),p.substring(j+1))
+              if(b == true)
+                return true;
+              i += 1;
+            }
+//            println(i + " "+ j )
+            i -= 1;
+
+          //当前匹配字符为字符的情况
+          }else{
+            if(((j+1) < pLen) && (p.charAt(j+1) == '*')){
+              i -= 1;
+              break;
+            }else if((s.charAt(i) == p.charAt(j))){
+              break;
+            }else{
+              return false;
+            }
+          }
+        )
+        i += 1;
+        j += 1;
+      }
+    while((j+1) < pLen && p.charAt(j+1) == '*'){
+      j += 2;
+    }
+    if(i == sLen && j == pLen)
+      return true;
+    else
+      return false;
+  }
+
+  /** Palindrome Number
+    * Determine whether an integer is a palindrome. An integer is a palindrome when it reads the same backward as forward.
+    */
+  //先转成字符串，是负数的直接false
+  def isPalindrome(x: Int): Boolean = {
+    if(x < 0)
+      return false;
+    else if(x == 0)
+      return true;
+    println(x)
+    val str = x.toString
+    var head = 0;
+    var tail = str.length-1;
+    import util.control.Breaks._
+    breakable(
+      while(true){
+        if(str.charAt(head) != str.charAt(tail)){
+          return false;
+        }
+        head += 1;
+        tail -= 1;
+        if(head == tail || head > tail)
+          break;
+      }
+    )
+    return true;
+  }
+
 
   /** String to Integer (atoi)
     *
